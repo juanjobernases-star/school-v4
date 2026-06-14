@@ -1,1 +1,4 @@
-const CACHE='school-v4-secure-v1';const FILES=['./','./index.html','./styles.css','./app.js','./manifest.json'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
+var C="school-v4-v3";var A=["/index.html","/app.js","/styles.css"];
+self.addEventListener("install",function(e){e.waitUntil(caches.open(C).then(function(c){return c.addAll(A)}))});
+self.addEventListener("fetch",function(e){if(e.request.url.includes("11434"))return;e.respondWith(caches.match(e.request).then(function(r){return r||fetch(e.request)}))});
+self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(n){return Promise.all(n.filter(function(k){return k!==C}).map(function(k){return caches.delete(k)}))}))});

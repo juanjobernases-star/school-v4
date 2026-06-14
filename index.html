@@ -3,23 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>School v4 — Exploradores de 6º</title>
+<title>School v4</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#7c3aed">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:11434 https://school-gemini-proxy.pechicolo.workers.dev; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';">
-<link rel="stylesheet" href="styles.css">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' http://localhost:11434; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';">
+<link rel="stylesheet" href="styles.css?v=1781456168">
 </head>
 <body>
+<div id="splash" class="splash">
+    <div class="splash-icon">🎓</div>
+    <div class="splash-title">School v4</div>
+    <div class="splash-sub">Exploradores de 6º</div>
+    <div class="splash-loader">Cargando<span class="splash-dots">...</span></div>
+    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+  </div>
 <div class="app">
-  <aside><h2>🎓 School v4</h2><div id="nav" class="nav"></div></aside>
-  <main>
-    <section id="home" class="page"><div class="hero"><h1>School v4 — Exploradores de 6º</h1><p>240 preguntas · PWA · Tutor IA local con Ollama gemma2:2b</p></div><div id="subjects" class="grid"></div><div class="card"><h3>Progreso</h3><div id="progress"></div></div></section>
-    <section id="quiz" class="page hidden"><button id="backQuiz" class="btn btn2">← Volver</button><div class="card"><h2 id="quizTitle"></h2><p id="quizCounter"></p><div id="quizBox"></div></div></section>
-    <section id="exam" class="page hidden"><button id="backExam" class="btn btn2">← Volver</button><div class="card"><h2>Examen semanal</h2><p>20 preguntas mixtas. Aprueba con 50%.</p><button id="startExam" class="btn">Comenzar</button><div id="examBox"></div></div></section>
-    <section id="ia" class="page hidden"><button id="backIa" class="btn btn2">← Volver</button><div class="card"><h2>Tutor IA local</h2><p>Modelo: gemma2:2b · endpoint: localhost:11434</p><div id="chat" class="chat"></div><div class="row"><input id="prompt" maxlength="500" autocomplete="off" placeholder="Pregunta algo..."><button id="send" class="btn">Enviar</button></div></div></section>
-    <section id="data" class="page hidden"><button id="backData" class="btn btn2">← Volver</button><div class="card"><h2>Exportar / Importar progreso</h2><button id="exportBtn" class="btn">Exportar</button><input id="importInput" type="file" accept="application/json"></div></section>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><span class="logo-icon">🎓</span><div class="logo-text"><span class="logo-title">School v4</span><span class="logo-sub">Exploradores de 6º</span></div></div>
+    <nav class="sidebar-nav">
+      <button class="nav-btn active" data-page="home"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
+      <button class="nav-btn" data-page="exam"><span class="nav-icon">📋</span><span class="nav-label">Examen semanal</span></button>
+      <button class="nav-btn" data-page="ia"><span class="nav-icon">🤖</span><span class="nav-label">Tutor IA local</span></button>
+      <button class="nav-btn" data-page="progress-scroll"><span class="nav-icon">📊</span><span class="nav-label">Progreso</span></button>
+      <button class="nav-btn" data-page="data"><span class="nav-icon">⬇</span><span class="nav-label">Exportar / Importar</span></button>
+      <button class="nav-btn" data-page="settings"><span class="nav-icon">⚙</span><span class="nav-label">Ajustes</span></button>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-badge"><span>🏆</span><p>¡Sigue así!</p><p>Cada pregunta te hace más inteligente 🚀</p></div></div>
+  </aside>
+  <main class="main-content">
+    <div class="status-bar"><div class="status-pill"><span class="status-dot green"></span><span class="status-text">IA local: Conectada</span><span class="status-icon">🤖</span></div></div>
+    <section id="home" class="page">
+      <div class="hero"><div class="hero-text"><h1>School v4 — Exploradores de 6º</h1><p>260 preguntas · 7 materias · LOMLOE 6º Primaria · Tutor IA local</p></div><div class="hero-mascot">👨‍🚀</div></div>
+      <div class="section-header section-toggle"><h2>📚 Elige una materia para practicar</h2><span class="toggle-arrow">▼</span></div>
+      <div id="subjects" class="subjects-grid collapsible"></div>
+      <div class="section-header" id="progress-anchor"><h2>📊 Tu progreso por materia</h2></div>
+      <div class="card"><div id="progress" class="progress-grid"></div><div class="motivational">⭐ ¡La constancia es la clave del éxito!</div></div>
+    <div class="reset-section"><button id="resetAll" class="btn-reset">🔄 Reiniciar todo el progreso</button></div>
+    </section>
+    <section id="quiz" class="page hidden"><button id="backQuiz" class="btn-back">← Volver</button><div class="card"><h2 id="quizTitle"></h2><p id="quizCounter" class="quiz-counter"></p><div id="quizBox"></div></div></section>
+    <section id="exam" class="page hidden"><button id="backExam" class="btn-back">← Volver</button><div class="card"><div class="exam-header"><h2>📋 Examen semanal</h2><p>20 preguntas mixtas. Aprueba con 50%.</p></div><button id="startExam" class="btn btn-primary btn-lg">🚀 Comenzar</button><div id="examBox"></div></div></section>
+    <section id="ia" class="page hidden"><button id="backIa" class="btn-back">← Volver</button><div class="card"><div class="ia-header"><h2>🤖 Tutor IA local</h2><p class="ia-modelo">gemma2:2b · localhost:11434</p></div><div id="chat" class="chat"></div><div class="chat-input"><input id="prompt" maxlength="500" autocomplete="off" placeholder="Escribe tu pregunta..."><button id="send" class="btn btn-primary">Enviar</button></div></div></section>
+    <section id="data" class="page hidden"><button id="backData" class="btn-back">← Volver</button><div class="card"><h2>💾 Exportar / Importar</h2><div class="data-actions"><button id="exportBtn" class="btn btn-primary">📥 Exportar</button><div class="import-area"><label class="btn btn-outline" for="importInput">📤 Importar</label><input id="importInput" type="file" accept="application/json"></div></div></div></section>
+    <section id="settings" class="page hidden"><button id="backSettings" class="btn-back">← Volver</button><div class="card"><h2>⚙ Ajustes</h2><div class="settings-item"><span>Preguntas por quiz:</span><select id="quizCount" class="settings-select"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option></select></div><div class="settings-item"><span>Version:</span><span class="settings-value">v4.3.0</span></div><button id="clearProgress" class="btn btn-outline btn-danger">Borrar progreso</button></div></section>
   </main>
 </div>
-<script src="app.js"></script>
+<script src="app.js?v=1781456168"></script>
 </body>
 </html>

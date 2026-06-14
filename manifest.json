@@ -1,8 +1,8 @@
 {
-  "name": "School v4 — Exploradores de 6º",
+  "name": "School v4 - Exploradores de 6o",
   "short_name": "School v4",
-  "start_url": "./index.html",
+  "start_url": "/index.html",
   "display": "standalone",
-  "theme_color": "#7c3aed",
-  "background_color": "#f5f6fa"
+  "background_color": "#f5f3ff",
+  "theme_color": "#7c3aed"
 }

@@ -1,6 +1,5 @@
 "use strict";
-var quizSize=10;
-// app.js - School v4 v4 - LOMLOE 6o Primaria - 260 preguntas - UI Premium
+// app.js - School v4 - LOMLOE 6o Primaria - 260 preguntas
 
 var PREGUNTAS = {
 
@@ -72,7 +71,7 @@ lengua: [
 {p:"Cabellos de oro es:",o:["Simil","Metafora","Hiperbole","Personificacion"],c:1,e:"Identifica cabello=oro."},
 {p:"Plural de lapiz:",o:["Lapizes","Lapices","Lapizs","Lapis"],c:1,e:"z cambia a c antes de e."},
 {p:"Sustantivo abstracto nombra:",o:["Algo tangible","Ideas o sentimientos","Personas","Lugares"],c:1,e:"Ej: amor, libertad."},
-{p:"Que bonito dia es oracion:",o:["Interrogativa","Imperativa","Exclamativa","Enunciativa"],c:2,e:"Signos exclamacion = exclamativa."},
+{p:"Que bonito dia! es oracion:",o:["Interrogativa","Imperativa","Exclamativa","Enunciativa"],c:2,e:"Signos exclamacion = exclamativa."},
 {p:"Conjuncion que opone ideas:",o:["Y","O","Pero","Ni"],c:2,e:"Pero = adversativa."},
 {p:"Conjugaciones en espanol:",o:["1","2","3","4"],c:2,e:"-ar, -er, -ir = 3."},
 {p:"Palabra compuesta es:",o:["Con prefijo","Union de 2+ palabras","Muy larga","Tecnica"],c:1,e:"Ej: sacapuntas, paraguas."},
@@ -287,107 +286,101 @@ valores: [
 
 };
 
-// SANITIZE & MARKDOWN
-function sanitize(t){
-  return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
-}
-function simpleMarkdown(text){
-  var s=sanitize(text);
-  s=s.replace(/```([\s\S]*?)```/g,"<pre><code>$1</code></pre>");
-  s=s.replace(/`([^`]+)`/g,"<code>$1</code>");
-  s=s.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
-  s=s.replace(/\*(.+?)\*/g,"<em>$1</em>");
-  var lines=s.split("\n");var result=[];var inList=false;var listTag="ul";
-  for(var i=0;i<lines.length;i++){
-    var line=lines[i].trim();
-    if(/^[\*\-]\s+/.test(line)){
-      if(!inList){listTag="ul";result.push("<ul>");inList=true;}
-      result.push("<li>"+line.replace(/^[\*\-]\s+/,"")+"</li>");
-    } else if(/^\d+\.\s+/.test(line)){
-      if(!inList){listTag="ol";result.push("<ol>");inList=true;}
-      result.push("<li>"+line.replace(/^\d+\.\s+/,"")+"</li>");
-    } else {
-      if(inList){result.push("</"+listTag+">");inList=false;}
-      if(/^##?#?\s+/.test(line)) result.push("<h4>"+line.replace(/^##?#?\s+/,"")+"</h4>");
-      else if(line==="") result.push("<br>");
-      else result.push("<p>"+line+"</p>");
-    }
-  }
-  if(inList) result.push("</"+listTag+">");
-  return result.join("");
-}
-
-// SUBJECTS with color theme
-var SUBJECTS=[
-  {key:"matematicas",name:"Matematicas",emoji:"\uD83D\uDCD0",color:"purple"},
-  {key:"lengua",name:"Lengua Castellana",emoji:"\uD83D\uDCD6",color:"pink"},
-  {key:"naturales",name:"Ciencias Naturales",emoji:"\uD83C\uDF3F",color:"green"},
-  {key:"sociales",name:"Ciencias Sociales",emoji:"\uD83C\uDF0D",color:"blue"},
-  {key:"ingles",name:"Ingles",emoji:"\uD83C\uDDEC\uD83C\uDDE7",color:"navy"},
-  {key:"artistica",name:"Educacion Artistica",emoji:"\uD83C\uDFA8",color:"orange"},
-  {key:"valores",name:"Valores Civicos",emoji:"\uD83E\uDD1D",color:"teal"}
+// SUBJECTS CONFIG
+var SUBJECTS = [
+  {key:"matematicas",  name:"Matematicas",         emoji:"\uD83D\uDCD0"},
+  {key:"lengua",       name:"Lengua Castellana",    emoji:"\uD83D\uDCD6"},
+  {key:"naturales",    name:"Ciencias Naturales",   emoji:"\uD83C\uDF3F"},
+  {key:"sociales",     name:"Ciencias Sociales",    emoji:"\uD83C\uDF0D"},
+  {key:"ingles",       name:"Ingles",               emoji:"\uD83C\uDDEC\uD83C\uDDE7"},
+  {key:"artistica",    name:"Educacion Artistica",  emoji:"\uD83C\uDFA8"},
+  {key:"valores",      name:"Valores Civicos",      emoji:"\uD83E\uDD1D"}
 ];
 
-var quiz={list:[],idx:0,hits:0,total:0,key:"",mode:"quiz"};
+var quiz = {list:[], idx:0, hits:0, total:0, key:"", mode:"quiz"};
 
+// UTILS
 function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
 function $(id){return document.getElementById(id);}
 function loadProgress(){try{return JSON.parse(localStorage.getItem("sv4_progress")||"{}");} catch(e){return {};}}
 function saveProgress(data){try{localStorage.setItem("sv4_progress",JSON.stringify(data));}catch(e){}}
 
+// SIMPLE MARKDOWN RENDERER
+function simpleMarkdown(text){
+  // Sanitize HTML
+  var s = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  // Bold **text**
+  s = s.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
+  // Italic *text* (but not ** which is already handled)
+  s = s.replace(/\*(.+?)\*/g,"<em>$1</em>");
+  // Split into lines for block processing
+  var lines = s.split("\n");
+  var result = [];
+  var inList = false;
+  for(var i=0;i<lines.length;i++){
+    var line = lines[i].trim();
+    // List items: * item or - item
+    if(line.match(/^[\*\-]\s+/)){
+      if(!inList){result.push("<ul>");inList=true;}
+      result.push("<li>"+line.replace(/^[\*\-]\s+/,"")+"</li>");
+    } else {
+      if(inList){result.push("</ul>");inList=false;}
+      // Headings: # text
+      if(line.match(/^#{1,3}\s+/)){
+        result.push("<h4>"+line.replace(/^#{1,3}\s+/,"")+"</h4>");
+      } else if(line===""){
+        result.push("<br>");
+      } else {
+        result.push("<p>"+line+"</p>");
+      }
+    }
+  }
+  if(inList) result.push("</ul>");
+  return result.join("");
+}
+
 // NAVIGATION
-function showPage(id){if(id==="progress-scroll"){initSplash();initCollapsible();initReset();showPage("home");setTimeout(function(){var el=document.getElementById("progress-anchor");if(el)el.scrollIntoView({behavior:"smooth"});},100);return;}
+function showPage(id){
   var pages=document.querySelectorAll(".page");
   for(var i=0;i<pages.length;i++){pages[i].classList.add("hidden");}
   var page=$(id);
   if(page) page.classList.remove("hidden");
-  updateNavActive(id);
-  if(id==="home") renderProgress();
 }
 
-function updateNavActive(pageId){
-  var btns=document.querySelectorAll(".nav-btn");
-  for(var i=0;i<btns.length;i++){
-    var dp=btns[i].getAttribute("data-page");
-    if(dp===pageId) btns[i].classList.add("active");
-    else btns[i].classList.remove("active");
+function renderNav(){
+  var nav=$("nav");
+  if(!nav) return;
+  nav.innerHTML="";
+  var items=[
+    {id:"home",label:"\uD83C\uDFE0 Inicio"},
+    {id:"exam",label:"\uD83D\uDCDD Examen semanal"},
+    {id:"ia",  label:"\uD83E\uDD16 Tutor IA"},
+    {id:"data",label:"\uD83D\uDCBE Datos"}
+  ];
+  for(var i=0;i<items.length;i++){
+    var btn=document.createElement("button");
+    btn.className="nav-btn";
+    btn.textContent=items[i].label;
+    btn.setAttribute("data-page",items[i].id);
+    btn.addEventListener("click",function(){showPage(this.getAttribute("data-page"));});
+    nav.appendChild(btn);
   }
-}
-
-function initNav(){
-  var btns=document.querySelectorAll(".nav-btn[data-page]");
-  for(var i=0;i<btns.length;i++){
-    btns[i].addEventListener("click",function(){showPage(this.getAttribute("data-page"));});
-  }
-}
-
-// CHECK OLLAMA STATUS
-function checkOllamaStatus(){
-  var dot=document.querySelector(".status-dot");
-  var label=document.querySelector(".status-bar span:last-child");
-  if(!dot) return;
-  fetch("http://localhost:11434",{method:"GET"})
-  .then(function(r){
-    dot.classList.remove("red");dot.classList.add("green");
-    if(label) label.textContent="IA local: Conectada";
-  })
-  .catch(function(){
-    dot.classList.remove("green");dot.classList.add("red");
-    if(label) label.textContent="IA local: Desconectada";
-  });
 }
 
 // SUBJECT CARDS
 function renderSubjects(){
-  var grid=$("subjects");if(!grid)return;grid.innerHTML="";
+  var grid=$("subjects");
+  if(!grid) return;
+  grid.innerHTML="";
   for(var s=0;s<SUBJECTS.length;s++){
     var subj=SUBJECTS[s];
-    var count=PREGUNTAS[subj.key]?PREGUNTAS[subj.key].length:0;
-    var card=document.createElement("div");
+    var card=document.createElement("button");
     card.className="subject-card";
-    card.setAttribute("data-color",subj.color||"purple");
+    var count=PREGUNTAS[subj.key]?PREGUNTAS[subj.key].length:0;
+    card.innerHTML='<span class="subject-emoji">'+subj.emoji+'</span>'+
+                   '<span class="subject-name">'+subj.name+'</span>'+
+                   '<span class="subject-count">'+count+' preguntas</span>';
     card.setAttribute("data-key",subj.key);
-    card.innerHTML='<div class="subject-emoji">'+subj.emoji+'</div>'+'<div class="subject-name">'+subj.name+'</div>'+'<div class="subject-count">'+count+' preguntas</div>'+'<button class="subject-btn">Practicar</button>';
     card.addEventListener("click",function(){startQuiz(this.getAttribute("data-key"));});
     grid.appendChild(card);
   }
@@ -395,15 +388,20 @@ function renderSubjects(){
 
 // PROGRESS
 function renderProgress(){
-  var div=$("progress");if(!div)return;
-  var data=loadProgress();var html="";
+  var div=$("progress");
+  if(!div) return;
+  var data=loadProgress();
+  var html="";
   for(var s=0;s<SUBJECTS.length;s++){
     var subj=SUBJECTS[s];
     var d=data[subj.key]||{total:0,hits:0};
     var pct=d.total>0?Math.round((d.hits/d.total)*100):0;
-    html+='<div class="progress-item">'+'<span>'+subj.emoji+' '+subj.name+'</span>'+'<div class="pbar"><div class="pbar-fill c-'+(subj.color||"purple")+'" style="width:'+pct+'%"></div></div>'+'<span>'+pct+'% ('+d.hits+'/'+d.total+')</span></div>';
+    html+='<div class="progress-item">'+
+          '<span>'+subj.emoji+' '+subj.name+'</span>'+
+          '<div class="pbar"><div class="pbar-fill" style="width:'+pct+'%"></div></div>'+
+          '<span>'+pct+'% ('+d.hits+'/'+d.total+')</span></div>';
   }
-  if(!html)html="<p>Aun no has respondido preguntas.</p>";
+  if(!html) html="<p>Aun no has respondido preguntas. Elige una materia!</p>";
   div.innerHTML=html;
 }
 
@@ -418,10 +416,10 @@ function recordAnswer(key,correct){
 // QUIZ
 function startQuiz(key){
   var bank=PREGUNTAS[key];
-  if(!bank||bank.length===0){alert("No hay preguntas.");return;}
+  if(!bank||bank.length===0){alert("No hay preguntas para esta materia.");return;}
   var subj=null;
   for(var i=0;i<SUBJECTS.length;i++){if(SUBJECTS[i].key===key){subj=SUBJECTS[i];break;}}
-  quiz={list:shuffle(bank).slice(0,Math.min(quizSize||10,bank.length)),idx:0,hits:0,total:0,key:key,mode:"quiz"};
+  quiz={list:shuffle(bank).slice(0,Math.min(10,bank.length)),idx:0,hits:0,total:0,key:key,mode:"quiz"};
   var title=$("quizTitle");
   if(title) title.textContent=(subj?subj.emoji+" "+subj.name:key);
   showPage("quiz");
@@ -429,18 +427,24 @@ function startQuiz(key){
 }
 
 function renderQuestion(boxId,counterId){
-  var box=$(boxId);if(!box) return;
+  var box=$(boxId);
+  if(!box) return;
   var counter=counterId?$(counterId):null;
-  var q=quiz.list[quiz.idx];var num=quiz.idx+1;var tot=quiz.list.length;
+  var q=quiz.list[quiz.idx];
+  var num=quiz.idx+1;
+  var tot=quiz.list.length;
+
   if(counter) counter.textContent="Pregunta "+num+" de "+tot+"  |  Aciertos: "+quiz.hits+"  Fallos: "+(quiz.total-quiz.hits);
+
   var html='<div class="question-text">'+q.p+'</div><div class="options">';
   for(var i=0;i<q.o.length;i++){
     html+='<button class="opt-btn" data-idx="'+i+'">'+
           '<span class="opt-letter">'+String.fromCharCode(65+i)+'</span> '+q.o[i]+'</button>';
   }
   html+='</div><div id="feedback" class="feedback hidden"></div>'+
-        '<button id="nextBtn" class="btn btn-primary hidden">Siguiente</button>';
+        '<button id="nextBtn" class="btn hidden">Siguiente</button>';
   box.innerHTML=html;
+
   var btns=box.querySelectorAll(".opt-btn");
   for(var j=0;j<btns.length;j++){
     btns[j].addEventListener("click",function(){checkAnswer(parseInt(this.getAttribute("data-idx")),boxId);});
@@ -448,9 +452,13 @@ function renderQuestion(boxId,counterId){
 }
 
 function checkAnswer(idx,boxId){
-  var box=$(boxId);var q=quiz.list[quiz.idx];var correct=(idx===q.c);
-  quiz.total++;if(correct) quiz.hits++;
+  var box=$(boxId);
+  var q=quiz.list[quiz.idx];
+  var correct=(idx===q.c);
+  quiz.total++;
+  if(correct) quiz.hits++;
   recordAnswer(quiz.key,correct);
+
   var btns=box.querySelectorAll(".opt-btn");
   for(var i=0;i<btns.length;i++){
     btns[i].classList.add("disabled");
@@ -459,32 +467,48 @@ function checkAnswer(idx,boxId){
     var clone=btns[i].cloneNode(true);
     btns[i].parentNode.replaceChild(clone,btns[i]);
   }
+
   var fb=box.querySelector("#feedback");
   if(fb){
     fb.classList.remove("hidden");
-    if(correct){fb.classList.add("fb-correct");fb.textContent="Correcto! "+q.e;}
-    else{fb.classList.add("fb-wrong");fb.textContent="Incorrecto. "+q.e;}
+    if(correct){
+      fb.classList.add("fb-correct");
+      fb.textContent="Correcto! "+q.e;
+    } else {
+      fb.classList.add("fb-wrong");
+      fb.textContent="Incorrecto. "+q.e;
+    }
   }
+
   var nextBtn=box.querySelector("#nextBtn");
   if(nextBtn){
     nextBtn.classList.remove("hidden");
     if(quiz.idx+1>=quiz.list.length) nextBtn.textContent="Ver resultados";
     nextBtn.addEventListener("click",function(){
       quiz.idx++;
-      if(quiz.idx<quiz.list.length){renderQuestion(boxId,quiz.mode==="quiz"?"quizCounter":null);}
-      else{showResults(boxId);}
+      if(quiz.idx<quiz.list.length){
+        renderQuestion(boxId,quiz.mode==="quiz"?"quizCounter":null);
+      } else {
+        showResults(boxId);
+      }
     });
   }
 }
 
 function showResults(boxId){
-  var box=$(boxId);var tot=quiz.list.length;
-  var nota=Math.round((quiz.hits/tot)*10);var pct=Math.round((quiz.hits/tot)*100);
+  var box=$(boxId);
+  var tot=quiz.list.length;
+  var nota=Math.round((quiz.hits/tot)*10);
+  var pct=Math.round((quiz.hits/tot)*100);
+  var subj=null;
+  for(var i=0;i<SUBJECTS.length;i++){if(SUBJECTS[i].key===quiz.key){subj=SUBJECTS[i];break;}}
+
   var emoji,msg;
-  if(nota>=9){emoji="\uD83C\uDFC6";msg="Sobresaliente!";}
-  else if(nota>=7){emoji="\uD83C\uDF1F";msg="Notable!";}
+  if(nota>=9){emoji="\uD83C\uDFC6";msg="Sobresaliente! Eres un crack!";}
+  else if(nota>=7){emoji="\uD83C\uDF1F";msg="Notable! Muy bien!";}
   else if(nota>=5){emoji="\uD83D\uDC4D";msg="Aprobado! Sigue practicando.";}
-  else{emoji="\uD83D\uDCAA";msg="Necesitas repasar.";}
+  else{emoji="\uD83D\uDCAA";msg="Necesitas repasar. Tu puedes!";}
+
   box.innerHTML=
     '<div class="results">'+
     '<h2>'+emoji+' Resultados</h2>'+
@@ -494,13 +518,15 @@ function showResults(boxId){
     '<p>Fallos: <strong>'+(tot-quiz.hits)+'</strong></p>'+
     '<p class="results-msg">'+msg+'</p>'+
     '<div class="results-btns">'+
-    '<button class="btn btn-primary" id="retryBtn">Repetir</button>'+
-    '<button class="btn btn-outline" id="homeBtn">Inicio</button>'+
+    '<button class="btn" id="retryBtn">Repetir</button>'+
+    '<button class="btn btn2" id="homeBtn">Inicio</button>'+
     '</div></div>';
+
   var retryBtn=$("retryBtn");
   if(retryBtn) retryBtn.addEventListener("click",function(){startQuiz(quiz.key);});
   var homeBtn=$("homeBtn");
-  if(homeBtn) homeBtn.addEventListener("click",function(){initSplash();initCollapsible();initReset();showPage("home");});
+  if(homeBtn) homeBtn.addEventListener("click",function(){showPage("home");renderProgress();});
+
   try{
     var exams=JSON.parse(localStorage.getItem("sv4_exams")||"[]");
     exams.push({materia:quiz.key,nota:nota,aciertos:quiz.hits,total:tot,fecha:new Date().toISOString()});
@@ -513,7 +539,11 @@ function startExam(){
   var pool=[];
   for(var s=0;s<SUBJECTS.length;s++){
     var key=SUBJECTS[s].key;
-    if(PREGUNTAS[key]){for(var q=0;q<PREGUNTAS[key].length;q++){pool.push(PREGUNTAS[key][q]);}}
+    if(PREGUNTAS[key]){
+      for(var q=0;q<PREGUNTAS[key].length;q++){
+        pool.push(PREGUNTAS[key][q]);
+      }
+    }
   }
   pool=shuffle(pool).slice(0,20);
   quiz={list:pool,idx:0,hits:0,total:0,key:"examen_semanal",mode:"exam"};
@@ -522,67 +552,102 @@ function startExam(){
   renderQuestion("examBox",null);
 }
 
-// CHAT IA
+// CHAT IA - IMPROVED
 function initChat(){
-  var sendBtn=$("send");var promptInput=$("prompt");
+  var sendBtn=$("send");
+  var promptInput=$("prompt");
   if(!sendBtn||!promptInput) return;
+
   function doSend(){
-    var text=promptInput.value.trim();if(!text) return;
-    addChatMsg("user",text);promptInput.value="";sendBtn.disabled=true;
-    var thinking=document.createElement("div");
-    thinking.className="chat-msg chat-ia chat-thinking";
-    thinking.innerHTML='<span class="chat-role">\uD83E\uDD16 Tutor:</span> Pensando...';
-    $("chat").appendChild(thinking);$("chat").scrollTop=$("chat").scrollHeight;
+    var text=promptInput.value.trim();
+    if(!text) return;
+    addChatMsg("user",text);
+    promptInput.value="";
+    sendBtn.disabled=true;
+
     fetch("http://localhost:11434/api/generate",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"gemma2:2b",
-        prompt:"Eres un tutor para alumnos de 6o Primaria en Espana. REGLAS: Responde en 3-5 frases maximo. Ve directo. No listas largas. No repitas pregunta. Conciso. Pregunta: "+text,
-        stream:false})
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        model:"gemma2:2b",
+        prompt:"Eres un tutor para alumnos de 6o Primaria en Espana. REGLAS: Responde en 3-5 frases maximo. Ve directo a la respuesta. No uses listas largas ni muchos emojis. No repitas la pregunta del alumno. Tono amigable pero conciso. Pregunta del alumno: "+text,
+        stream:false
+      })
     })
-    .then(function(resp){if(!resp.ok) throw new Error("HTTP "+resp.status);return resp.json();})
-    .then(function(data){thinking.remove();addChatMsg("ia",data.response||"Sin respuesta.");sendBtn.disabled=false;})
-    .catch(function(err){thinking.remove();addChatMsg("ia","Error conectando con Ollama: "+err.message);sendBtn.disabled=false;});
+    .then(function(resp){
+      if(!resp.ok) throw new Error("HTTP "+resp.status);
+      return resp.json();
+    })
+    .then(function(data){
+      addChatMsg("ia",data.response||"Sin respuesta del modelo.");
+      sendBtn.disabled=false;
+    })
+    .catch(function(err){
+      addChatMsg("ia","No se pudo conectar con Ollama. Asegurate de que esta ejecutandose en localhost:11434. Error: "+err.message);
+      sendBtn.disabled=false;
+    });
   }
+
   sendBtn.addEventListener("click",doSend);
   promptInput.addEventListener("keydown",function(e){if(e.key==="Enter") doSend();});
 }
 
 function addChatMsg(role,text){
-  var chat=$("chat");if(!chat) return;
+  var chat=$("chat");
+  if(!chat) return;
   var div=document.createElement("div");
   div.className="chat-msg chat-"+role;
   if(role==="ia"){
-    div.innerHTML='<span class="chat-role">\uD83E\uDD16 Tutor:</span>'+simpleMarkdown(text);
+    // IA response: render Markdown as HTML
+    div.innerHTML='<span class="chat-role">\uD83E\uDD16 Tutor:</span> '+simpleMarkdown(text);
   } else {
+    // User message: safe text only
     var roleSpan=document.createElement("span");
-    roleSpan.className="chat-role";roleSpan.textContent="\uD83E\uDDD1 Tu: ";
-    div.appendChild(roleSpan);div.appendChild(document.createTextNode(text));
+    roleSpan.className="chat-role";
+    roleSpan.textContent="\uD83E\uDDD1 Tu: ";
+    div.appendChild(roleSpan);
+    div.appendChild(document.createTextNode(text));
   }
-  chat.appendChild(div);chat.scrollTop=chat.scrollHeight;
+  chat.appendChild(div);
+  chat.scrollTop=chat.scrollHeight;
 }
 
 // EXPORT/IMPORT
 function initData(){
-  var expBtn=$("exportBtn");var impInput=$("importInput");
+  var expBtn=$("exportBtn");
+  var impInput=$("importInput");
+
   if(expBtn){
     expBtn.addEventListener("click",function(){
-      var data={progress:loadProgress(),exams:JSON.parse(localStorage.getItem("sv4_exams")||"[]"),exported:new Date().toISOString()};
+      var data={
+        progress:loadProgress(),
+        exams:JSON.parse(localStorage.getItem("sv4_exams")||"[]"),
+        exported:new Date().toISOString()
+      };
       var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-      var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+      var a=document.createElement("a");
+      a.href=URL.createObjectURL(blob);
       a.download="school_v4_datos_"+new Date().toISOString().slice(0,10)+".json";
-      a.click();URL.revokeObjectURL(a.href);
+      a.click();
+      URL.revokeObjectURL(a.href);
     });
   }
+
   if(impInput){
     impInput.addEventListener("change",function(e){
-      var file=e.target.files[0];if(!file) return;
+      var file=e.target.files[0];
+      if(!file) return;
       var reader=new FileReader();
       reader.onload=function(ev){
-        try{var data=JSON.parse(ev.target.result);
+        try{
+          var data=JSON.parse(ev.target.result);
           if(data.progress) saveProgress(data.progress);
           if(data.exams) localStorage.setItem("sv4_exams",JSON.stringify(data.exams));
-          alert("Datos importados correctamente.");renderProgress();
-        }catch(err){alert("Error: "+err.message);}
+          alert("Datos importados correctamente.");
+          renderProgress();
+        }catch(err){
+          alert("Error al importar: "+err.message);
+        }
       };
       reader.readAsText(file);
     });
@@ -590,67 +655,25 @@ function initData(){
 }
 
 // INIT
-
-// SPLASH SCREEN
-function initSplash(){
-  var splash=document.getElementById("splash");
-  if(!splash)return;
-  setTimeout(function(){
-    splash.classList.add("fade-out");
-    setTimeout(function(){splash.remove();},600);
-  },2500);
-}
-
-// COLLAPSIBLE SECTIONS
-function initCollapsible(){
-  var headers=document.querySelectorAll(".section-toggle");
-  for(var i=0;i<headers.length;i++){
-    headers[i].addEventListener("click",function(){
-      var arrow=this.querySelector(".toggle-arrow");
-      var target=this.nextElementSibling;
-      if(target&&target.classList.contains("collapsible")){
-        target.classList.toggle("collapsed");
-        if(arrow)arrow.classList.toggle("collapsed");
-      }
-    });
-  }
-}
-
-// RESET BUTTON
-function initReset(){
-  var btn=document.getElementById("resetAll");
-  if(!btn)return;
-  btn.addEventListener("click",function(){
-    if(confirm("\u00bfSeguro que quieres borrar TODO el progreso?\nEsta acci\u00f3n no se puede deshacer.")){
-      localStorage.removeItem("sv4_progress");
-      localStorage.removeItem("sv4_exams");
-      renderProgress();
-      alert("\u2705 Progreso reiniciado correctamente.");
-    }
-  });
-}
 document.addEventListener("DOMContentLoaded",function(){
-  initNav();
+  renderNav();
   renderSubjects();
   renderProgress();
   initChat();
   initData();
-  checkOllamaStatus();
-  setInterval(checkOllamaStatus,30000);
 
-  // Back buttons
   var backs={backQuiz:"home",backExam:"home",backIa:"home",backData:"home"};
   var backKeys=Object.keys(backs);
   for(var i=0;i<backKeys.length;i++){
     (function(btnId,pageId){
       var btn=$(btnId);
-      if(btn) btn.addEventListener("click",function(){showPage(pageId);});
+      if(btn) btn.addEventListener("click",function(){showPage(pageId);renderProgress();});
     })(backKeys[i],backs[backKeys[i]]);
   }
 
   var examBtn=$("startExam");
   if(examBtn) examBtn.addEventListener("click",startExam);
 
-  initSplash();initCollapsible();initReset();showPage("home");
-  console.log("School v4 Premium UI cargado - 260 preguntas");
+  showPage("home");
+  console.log("School v4 cargado - 260 preguntas - chat mejorado");
 });
