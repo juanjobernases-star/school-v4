@@ -1,4 +1,6 @@
 "use strict";
+var isLocalhost = (location.hostname === "localhost" || location.hostname === "127.0.0.1");
+
 var quizSize=10;
 // app.js - School v4 v4 - LOMLOE 6o Primaria - 260 preguntas - UI Premium
 
@@ -336,7 +338,7 @@ function loadProgress(){try{return JSON.parse(localStorage.getItem("sv4_progress
 function saveProgress(data){try{localStorage.setItem("sv4_progress",JSON.stringify(data));}catch(e){}}
 
 // NAVIGATION
-function showPage(id){if(id==="progress-scroll"){initSplash();initCollapsible();initReset();showPage("home");setTimeout(function(){var el=document.getElementById("progress-anchor");if(el)el.scrollIntoView({behavior:"smooth"});},100);return;}
+function showPage(id){if(id==="progress-scroll"){initSplash();initCollapsible();initReset();if(!isLocalhost){var sd=document.querySelector(".status-dot");if(sd){sd.classList.remove("green");sd.classList.add("red");}var st=document.querySelector(".status-text");if(st)st.textContent="IA: Solo en local";}showPage("home");setTimeout(function(){var el=document.getElementById("progress-anchor");if(el)el.scrollIntoView({behavior:"smooth"});},100);return;}
   var pages=document.querySelectorAll(".page");
   for(var i=0;i<pages.length;i++){pages[i].classList.add("hidden");}
   var page=$(id);
@@ -533,7 +535,9 @@ function initChat(){
     thinking.className="chat-msg chat-ia chat-thinking";
     thinking.innerHTML='<span class="chat-role">\uD83E\uDD16 Tutor:</span> Pensando...';
     $("chat").appendChild(thinking);$("chat").scrollTop=$("chat").scrollHeight;
-    fetch("http://localhost:11434/api/generate",{
+    (function(){
+    if(!isLocalhost){addChatMsg("ia","El Tutor IA solo funciona en modo local. Para usarlo, ejecuta la app en tu ordenador con: python3 -m http.server 8080");sendBtn.disabled=false;return Promise.reject("skip");}
+    return fetch("http://localhost:11434/api/generate",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"gemma2:2b",
         prompt:"Eres un tutor para alumnos de 6o Primaria en Espana. REGLAS: Responde en 3-5 frases maximo. Ve directo. No listas largas. No repitas pregunta. Conciso. Pregunta: "+text,
@@ -541,7 +545,7 @@ function initChat(){
     })
     .then(function(resp){if(!resp.ok) throw new Error("HTTP "+resp.status);return resp.json();})
     .then(function(data){thinking.remove();addChatMsg("ia",data.response||"Sin respuesta.");sendBtn.disabled=false;})
-    .catch(function(err){thinking.remove();addChatMsg("ia","Error conectando con Ollama: "+err.message);sendBtn.disabled=false;});
+    .catch(function(err){thinking.remove();addChatMsg("ia","Error conectando con Ollama: "+err.message);sendBtn.disabled=false;});})().catch(function(e){if(e==="skip")return;});
   }
   sendBtn.addEventListener("click",doSend);
   promptInput.addEventListener("keydown",function(e){if(e.key==="Enter") doSend();});
