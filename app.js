@@ -368,7 +368,7 @@ function checkOllamaStatus(){
   var dot=document.querySelector(".status-dot");
   var label=document.querySelector(".status-bar span:last-child");
   if(!dot) return;
-  fetch("http://localhost:11434",{method:"GET"})
+  (function(){var isL=(location.hostname==="localhost"||location.hostname==="127.0.0.1");if(!isL){var dd=document.querySelector(".status-dot");var tt=document.querySelector(".status-text");if(dd){dd.classList.remove("red");dd.classList.add("green");}if(tt)tt.textContent="IA: Groq Cloud";return Promise.resolve();}return fetch("http://localhost:11434",{method:"GET"})})()
   .then(function(r){
     dot.classList.remove("red");dot.classList.add("green");
     if(label) label.textContent="IA local: Conectada";
@@ -537,7 +537,7 @@ function initChat(){
     $("chat").appendChild(thinking);$("chat").scrollTop=$("chat").scrollHeight;
     (function(){
     if(!isLocalhost){addChatMsg("ia","El Tutor IA solo funciona en modo local. Para usarlo, ejecuta la app en tu ordenador con: python3 -m http.server 8080");sendBtn.disabled=false;return Promise.reject("skip");}
-    return fetch("http://localhost:11434/api/generate",{
+    var isLocal=(location.hostname==="localhost"||location.hostname==="127.0.0.1");if(!isLocal){fetch("https://school-gemini-proxy.pechicolo.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text})}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(function(d){thinking.remove();addChatMsg("ia",d.response||"Sin respuesta.");sendBtn.disabled=false;}).catch(function(e){thinking.remove();addChatMsg("ia","Error IA: "+e.message);sendBtn.disabled=false;});return;}return fetch("http://localhost:11434/api/generate",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"gemma2:2b",
         prompt:"Eres un tutor para alumnos de 6o Primaria en Espana. REGLAS: Responde en 3-5 frases maximo. Ve directo. No listas largas. No repitas pregunta. Conciso. Pregunta: "+text,
