@@ -2,49 +2,117 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>School v4</title>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#7c3aed">
-
-<link rel="stylesheet" href="styles.css?v=1781503392">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exploradores de Sexto – School v4</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="splash-title">School v4</div>
-    <div class="splash-sub">Exploradores de 6º</div>
-    <div class="splash-loader">Cargando<span class="splash-dots">...</span></div>
-    <div class="splash-bar"><div class="splash-bar-fill"></div></div>
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-logo">🎓</div>
+    <h1 class="splash-title">Exploradores de Sexto</h1>
+    <p class="splash-sub">Cargando...</p>
+    <div class="spinner"></div>
   </div>
-<div class="app">
-  <aside class="sidebar">
-    <div class="sidebar-logo"><span class="logo-icon">🎓</span><div class="logo-text"><span class="logo-title">School v4</span><span class="logo-sub">Exploradores de 6º</span></div></div>
-    <nav class="sidebar-nav">
-      <button class="nav-btn active" data-page="home"><span class="nav-icon">🏠</span><span class="nav-label">Inicio</span></button>
-      <button class="nav-btn" data-page="exam"><span class="nav-icon">📋</span><span class="nav-label">Examen semanal</span></button>
-      <button class="nav-btn" data-page="ia"><span class="nav-icon">🤖</span><span class="nav-label">Tutor IA local</span></button>
-      <button class="nav-btn" data-page="progress-scroll"><span class="nav-icon">📊</span><span class="nav-label">Progreso</span></button>
-      <button class="nav-btn" data-page="data"><span class="nav-icon">⬇</span><span class="nav-label">Exportar / Importar</span></button>
-      <button class="nav-btn" data-page="settings"><span class="nav-icon">⚙</span><span class="nav-label">Ajustes</span></button>
-    </nav>
-    <div class="sidebar-footer"><div class="sidebar-badge"><span>🏆</span><p>¡Sigue así!</p><p>Cada pregunta te hace más inteligente 🚀</p></div></div>
-  </aside>
-  <main class="main-content">
-    <div class="status-bar"><div class="status-pill"><span class="status-dot green"></span><span class="status-text">IA local: Conectada</span><span class="status-icon">🤖</span></div></div>
-    <section id="home" class="page">
-      <div class="hero"><div class="hero-text"><h1>School v4 — Exploradores de 6º</h1><p>260 preguntas · 7 materias · LOMLOE 6º Primaria · Tutor IA local</p></div><div class="hero-mascot">👨‍🚀</div></div>
-      <div class="section-header section-toggle"><h2>📚 Elige una materia para practicar</h2><span class="toggle-arrow">▼</span></div>
-      <div id="subjects" class="subjects-grid collapsible"></div>
-      <div class="section-header" id="progress-anchor"><h2>📊 Tu progreso por materia</h2></div>
-      <div class="card"><div id="progress" class="progress-grid"></div><div class="motivational">⭐ ¡La constancia es la clave del éxito!</div></div>
-    <div class="reset-section"><button id="resetAll" class="btn-reset">🔄 Reiniciar todo el progreso</button></div>
+</div>
+<div id="main-app" style="display:none;">
+  <button id="hamburger" aria-label="Menú">☰</button>
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">🎓</span>
+      <span class="sidebar-brand">School v4</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#" data-section="inicio" class="active">🏠 Inicio</a></li>
+      <li><a href="#" data-section="matematicas">📐 Matemáticas</a></li>
+      <li><a href="#" data-section="lengua">🔤 Lengua</a></li>
+      <li><a href="#" data-section="naturales">🔬 C. Naturales</a></li>
+      <li><a href="#" data-section="sociales">🌍 C. Sociales</a></li>
+      <li><a href="#" data-section="ingles">🇬🇧 Inglés</a></li>
+      <li><a href="#" data-section="biosfera">🌿 Biosfera</a></li>
+      <li class="nav-divider"></li>
+      <li><a href="#" data-section="examen">📝 Examen</a></li>
+      <li><a href="#" data-section="tutor">🤖 Tutor IA</a></li>
+      <li><a href="#" data-section="progreso">📊 Progreso</a></li>
+      <li><a href="#" data-section="ajustes">⚙️ Ajustes</a></li>
+    </ul>
+    <div class="sidebar-footer">v4.1 · LOMLOE 2024</div>
+  </nav>
+  <div id="sidebar-overlay"></div>
+  <main id="content">
+    <section id="inicio" class="section active">
+      <div class="hero">
+        <h1>¡Bienvenido, Explorador! 🚀</h1>
+        <p>Tu aventura educativa de 6º de Primaria comienza aquí</p>
+      </div>
+      <div class="cards-grid">
+        <div class="subject-card"><div class="card-header" onclick="toggleCard(this)"><span>📐 Matemáticas</span><span class="arrow">▼</span></div><div class="card-body"><p>Fracciones, decimales, porcentajes, geometría, estadística y más.</p><span class="q-count">45 preguntas</span><button class="btn-primary" onclick="startQuiz('Matemáticas')">Empezar Quiz</button></div></div>
+        <div class="subject-card"><div class="card-header" onclick="toggleCard(this)"><span>🔤 Lengua</span><span class="arrow">▼</span></div><div class="card-body"><p>Gramática, sintaxis, ortografía, literatura y comprensión lectora.</p><span class="q-count">45 preguntas</span><button class="btn-primary" onclick="startQuiz('Lengua')">Empezar Quiz</button></div></div>
+        <div class="subject-card"><div class="card-header" onclick="toggleCard(this)"><span>🔬 C. Naturales</span><span class="arrow">▼</span></div><div class="card-body"><p>Seres vivos, ecosistemas, cuerpo humano, energía y materia.</p><span class="q-count">43 preguntas</span><button class="btn-primary" onclick="startQuiz('Ciencias Naturales')">Empezar Quiz</button></div></div>
+        <div class="subject-card"><div class="card-header" onclick="toggleCard(this)"><span>🌍 C. Sociales</span><span class="arrow">▼</span></div><div class="card-body"><p>Geografía de España y Europa, historia, economía e instituciones.</p><span class="q-count">43 preguntas</span><button class="btn-primary" onclick="startQuiz('Ciencias Sociales')">Empezar Quiz</button></div></div>
+        <div class="subject-card"><div class="card-header" onclick="toggleCard(this)"><span>🇬🇧 Inglés</span><span class="arrow">▼</span></div><div class="card-body"><p>Tiempos verbales, vocabulario, comprensión lectora y gramática.</p><span class="q-count">42 preguntas</span><button class="btn-primary" onclick="startQuiz('Inglés')">Empezar Quiz</button></div></div>
+        <div class="subject-card"><div class="card-header" onclick="toggleCard(this)"><span>🌿 Biosfera</span><span class="arrow">▼</span></div><div class="card-body"><p>Biodiversidad, parques nacionales, ciclo del agua y sostenibilidad.</p><span class="q-count">42 preguntas</span><button class="btn-primary" onclick="startQuiz('Biosfera')">Empezar Quiz</button></div></div>
+      </div>
     </section>
-    <section id="quiz" class="page hidden"><button id="backQuiz" class="btn-back">← Volver</button><div class="card"><h2 id="quizTitle"></h2><p id="quizCounter" class="quiz-counter"></p><div id="quizBox"></div></div></section>
-    <section id="exam" class="page hidden"><button id="backExam" class="btn-back">← Volver</button><div class="card"><div class="exam-header"><h2>📋 Examen semanal</h2><p>20 preguntas mixtas. Aprueba con 50%.</p></div><button id="startExam" class="btn btn-primary btn-lg">🚀 Comenzar</button><div id="examBox"></div></div></section>
-    <section id="ia" class="page hidden"><button id="backIa" class="btn-back">← Volver</button><div class="card"><div class="ia-header"><h2>🤖 Tutor IA local</h2><p class="ia-modelo">gemma2:2b · localhost:11434</p></div><div id="chat" class="chat"></div><div class="chat-input"><input id="prompt" maxlength="500" autocomplete="off" placeholder="Escribe tu pregunta..."><button id="send" class="btn btn-primary">Enviar</button></div></div></section>
-    <section id="data" class="page hidden"><button id="backData" class="btn-back">← Volver</button><div class="card"><h2>💾 Exportar / Importar</h2><div class="data-actions"><button id="exportBtn" class="btn btn-primary">📥 Exportar</button><div class="import-area"><label class="btn btn-outline" for="importInput">📤 Importar</label><input id="importInput" type="file" accept="application/json"></div></div></div></section>
-    <section id="settings" class="page hidden"><button id="backSettings" class="btn-back">← Volver</button><div class="card"><h2>⚙ Ajustes</h2><div class="settings-item"><span>Preguntas por quiz:</span><select id="quizCount" class="settings-select"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option><option value="20">20</option></select></div><div class="settings-item"><span>Version:</span><span class="settings-value">v4.3.0</span></div><button id="clearProgress" class="btn btn-outline btn-danger">Borrar progreso</button></div></section>
+    <section id="matematicas" class="section"><div class="section-hero" style="background:linear-gradient(135deg,#007AFF,#5856D6);"><h2>📐 Matemáticas</h2><p>Fracciones, decimales, porcentajes, geometría, estadística y más.</p><button class="btn-primary btn-white" onclick="startQuiz('Matemáticas')">Empezar Quiz (10 preguntas)</button></div></section>
+    <section id="lengua" class="section"><div class="section-hero" style="background:linear-gradient(135deg,#FF9500,#FF6B00);"><h2>🔤 Lengua</h2><p>Gramática, sintaxis, ortografía, literatura y comprensión lectora.</p><button class="btn-primary btn-white" onclick="startQuiz('Lengua')">Empezar Quiz (10 preguntas)</button></div></section>
+    <section id="naturales" class="section"><div class="section-hero" style="background:linear-gradient(135deg,#34C759,#30B050);"><h2>🔬 Ciencias Naturales</h2><p>Seres vivos, ecosistemas, cuerpo humano, energía y materia.</p><button class="btn-primary btn-white" onclick="startQuiz('Ciencias Naturales')">Empezar Quiz (10 preguntas)</button></div></section>
+    <section id="sociales" class="section"><div class="section-hero" style="background:linear-gradient(135deg,#AF52DE,#8944AB);"><h2>🌍 Ciencias Sociales</h2><p>Geografía, historia, economía, instituciones y Constitución.</p><button class="btn-primary btn-white" onclick="startQuiz('Ciencias Sociales')">Empezar Quiz (10 preguntas)</button></div></section>
+    <section id="ingles" class="section"><div class="section-hero" style="background:linear-gradient(135deg,#FF2D55,#D6264A);"><h2>🇬🇧 Inglés</h2><p>Tiempos verbales, vocabulario, comprensión lectora y gramática.</p><button class="btn-primary btn-white" onclick="startQuiz('Inglés')">Empezar Quiz (10 preguntas)</button></div></section>
+    <section id="biosfera" class="section"><div class="section-hero" style="background:linear-gradient(135deg,#00C7BE,#00A89D);"><h2>🌿 Biosfera</h2><p>Biodiversidad, parques nacionales, ciclo del agua y sostenibilidad.</p><button class="btn-primary btn-white" onclick="startQuiz('Biosfera')">Empezar Quiz (10 preguntas)</button></div></section>
+    <section id="examen" class="section">
+      <h2>📝 Examen Semanal</h2>
+      <div class="exam-info"><p>Pon a prueba tus conocimientos con <strong>20 preguntas</strong> de todas las asignaturas. Tienes <strong>15 minutos</strong>. ¡Buena suerte! 🍀</p><button class="btn-primary btn-large" onclick="startExam()">🚀 Empezar Examen</button></div>
+      <h3 style="margin-top:2rem;">📅 Historial de Exámenes</h3>
+      <div id="exam-history"></div>
+    </section>
+    <section id="tutor" class="section">
+      <h2>🤖 Tutor IA</h2>
+      <div id="ai-status">Detectando proveedor de IA...</div>
+      <div id="chat-messages"><div class="chat-bubble ai">¡Hola! Soy tu tutor de 6º de Primaria. Pregúntame lo que necesites 😊</div></div>
+      <div class="chat-input-area"><input type="text" id="chat-input" placeholder="Pregúntame algo de 6º de Primaria..." autocomplete="off"><button id="chat-send">Enviar</button></div>
+    </section>
+    <section id="progreso" class="section">
+      <h2>📊 Mi Progreso</h2>
+      <div id="progress-stats"></div>
+      <div id="progress-subjects"></div>
+      <h3 style="margin-top:2rem;">📅 Historial de Exámenes</h3>
+      <div id="progress-exams"></div>
+    </section>
+    <section id="ajustes" class="section">
+      <h2>⚙️ Ajustes</h2>
+      <div class="settings-list">
+        <div class="setting-item"><div><strong>🌙 Modo Oscuro</strong><p class="setting-desc">Cambia el tema de la aplicación</p></div><label class="switch"><input type="checkbox" id="dark-toggle"><span class="slider"></span></label></div>
+        <div class="setting-item"><div><strong>🤖 Proveedor de IA</strong><p class="setting-desc">Local (Ollama) ↔ Cloud (Groq)</p></div><label class="switch"><input type="checkbox" id="ai-toggle"><span class="slider"></span></label></div>
+        <div class="setting-item"><div><strong>🗑️ Borrar Progreso</strong><p class="setting-desc">Eliminar todos los datos guardados</p></div><button class="btn-danger" onclick="resetProgress()">Borrar Todo</button></div>
+      </div>
+      <div class="settings-footer"><p>School v4.1 – Exploradores de Sexto · Hecho con ❤️</p></div>
+    </section>
   </main>
 </div>
-<script src="app.js?v=1781503392"></script>
+<div id="quiz-modal" class="modal">
+  <div class="modal-content">
+    <div class="quiz-header"><span id="quiz-title">Quiz</span><span id="quiz-progress">1/10</span><button class="close-btn" onclick="closeQuiz()">✕</button></div>
+    <div id="quiz-progress-bar"><div id="quiz-progress-fill"></div></div>
+    <h3 id="quiz-question"></h3>
+    <div id="quiz-options"></div>
+    <p id="quiz-explanation"></p>
+    <button id="quiz-next" onclick="nextQuestion()">Siguiente →</button>
+    <div id="quiz-results"></div>
+  </div>
+</div>
+<div id="exam-modal" class="modal">
+  <div class="modal-content">
+    <div class="quiz-header"><span id="exam-title">Examen Semanal</span><span id="exam-timer">15:00</span><span id="exam-progress">1/20</span><button class="close-btn" onclick="closeExam()">✕</button></div>
+    <div id="exam-progress-bar"><div id="exam-progress-fill"></div></div>
+    <h3 id="exam-question"></h3>
+    <div id="exam-options"></div>
+    <p id="exam-explanation"></p>
+    <button id="exam-next" onclick="nextExamQuestion()">Siguiente →</button>
+    <div id="exam-results"></div>
+  </div>
+</div>
+<script src="app.js"></script>
 </body>
 </html>
