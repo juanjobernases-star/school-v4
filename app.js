@@ -533,22 +533,19 @@ function initChat(){
     addChatMsg("user",text);promptInput.value="";sendBtn.disabled=true;
     var thinking=document.createElement("div");
     thinking.className="chat-msg chat-ia chat-thinking";
-    thinking.innerHTML='<span class="chat-role">\uD83E\uDD16 Tutor:</span> Pensando...';
+    thinking.innerHTML='<span class="chat-role">Tutor:</span> Pensando...';
     $("chat").appendChild(thinking);$("chat").scrollTop=$("chat").scrollHeight;
-    (function(){
-    
-    var isLocal=(location.hostname==="localhost"||location.hostname==="127.0.0.1");if(!isLocal){fetch("https://school-gemini-proxy.pechicolo.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text})}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(function(d){thinking.remove();addChatMsg("ia",d.response||"Sin respuesta.");sendBtn.disabled=false;}).catch(function(e){thinking.remove();addChatMsg("ia","Error IA: "+e.message);sendBtn.disabled=false;});return;}return fetch("http://localhost:11434/api/generate",{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({model:"gemma2:2b",
-        prompt:"Eres un tutor para alumnos de 6o Primaria en Espana. REGLAS: Responde en 3-5 frases maximo. Ve directo. No listas largas. No repitas pregunta. Conciso. Pregunta: "+text,
-        stream:false})
-    })
-    .then(function(resp){if(!resp.ok) throw new Error("HTTP "+resp.status);return resp.json();})
-    .then(function(data){thinking.remove();addChatMsg("ia",data.response||"Sin respuesta.");sendBtn.disabled=false;})
-    .catch(function(err){thinking.remove();addChatMsg("ia","Error conectando con Ollama: "+err.message);sendBtn.disabled=false;});
+    var isLocal=(location.hostname==="localhost"||location.hostname==="127.0.0.1");
+    var url=isLocal?"http://localhost:11434/api/generate":"https://school-gemini-proxy.pechicolo.workers.dev";
+    var body=isLocal?JSON.stringify({model:"gemma2:2b",prompt:"Eres tutor 6o Primaria. 3-5 frases. Directo. Pregunta: "+text,stream:false}):JSON.stringify({message:text});
+    fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:body})
+    .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();})
+    .then(function(d){thinking.remove();addChatMsg("ia",d.response||"Sin respuesta.");sendBtn.disabled=false;})
+    .catch(function(err){thinking.remove();addChatMsg("ia","Error: "+err.message);sendBtn.disabled=false;});
   }
   sendBtn.addEventListener("click",doSend);
   promptInput.addEventListener("keydown",function(e){if(e.key==="Enter") doSend();});
+});
 }
 
 function addChatMsg(role,text){
