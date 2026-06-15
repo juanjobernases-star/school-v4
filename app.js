@@ -338,7 +338,7 @@ function loadProgress(){try{return JSON.parse(localStorage.getItem("sv4_progress
 function saveProgress(data){try{localStorage.setItem("sv4_progress",JSON.stringify(data));}catch(e){}}
 
 // NAVIGATION
-function showPage(id){if(id==="progress-scroll"){initSplash();initCollapsible();initReset();if(!isLocalhost){var sd=document.querySelector(".status-dot");if(sd){sd.classList.remove("green");sd.classList.add("red");}var st=document.querySelector(".status-text");if(st)st.textContent="IA: Solo en local";}showPage("home");setTimeout(function(){var el=document.getElementById("progress-anchor");if(el)el.scrollIntoView({behavior:"smooth"});},100);return;}
+function showPage(id){if(id==="progress-scroll"){initCollapsible();initReset();if(!isLocalhost){var sd=document.querySelector(".status-dot");if(sd){sd.classList.remove("green");sd.classList.add("red");}var st=document.querySelector(".status-text");if(st)st.textContent="IA: Solo en local";}showPage("home");setTimeout(function(){var el=document.getElementById("progress-anchor");if(el)el.scrollIntoView({behavior:"smooth"});},100);return;}
   var pages=document.querySelectorAll(".page");
   for(var i=0;i<pages.length;i++){pages[i].classList.add("hidden");}
   var page=$(id);
@@ -502,7 +502,7 @@ function showResults(boxId){
   var retryBtn=$("retryBtn");
   if(retryBtn) retryBtn.addEventListener("click",function(){startQuiz(quiz.key);});
   var homeBtn=$("homeBtn");
-  if(homeBtn) homeBtn.addEventListener("click",function(){initSplash();initCollapsible();initReset();showPage("home");});
+  if(homeBtn) homeBtn.addEventListener("click",function(){initCollapsible();initReset();showPage("home");});
   try{
     var exams=JSON.parse(localStorage.getItem("sv4_exams")||"[]");
     exams.push({materia:quiz.key,nota:nota,aciertos:quiz.hits,total:tot,fecha:new Date().toISOString()});
@@ -655,6 +655,6 @@ document.addEventListener("DOMContentLoaded",function(){
   var examBtn=$("startExam");
   if(examBtn) examBtn.addEventListener("click",startExam);
 
-  initSplash();initCollapsible();initReset();showPage("home");
+  initCollapsible();initReset();showPage("home");
   console.log("School v4 Premium UI cargado - 260 preguntas");
 });
