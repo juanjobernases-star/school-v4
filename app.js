@@ -536,7 +536,7 @@ function initChat(){
     thinking.innerHTML='<span class="chat-role">\uD83E\uDD16 Tutor:</span> Pensando...';
     $("chat").appendChild(thinking);$("chat").scrollTop=$("chat").scrollHeight;
     (function(){
-    if(!isLocalhost){addChatMsg("ia","El Tutor IA solo funciona en modo local. Para usarlo, ejecuta la app en tu ordenador con: python3 -m http.server 8080");sendBtn.disabled=false;return Promise.reject("skip");}
+    
     var isLocal=(location.hostname==="localhost"||location.hostname==="127.0.0.1");if(!isLocal){fetch("https://school-gemini-proxy.pechicolo.workers.dev",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text})}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();}).then(function(d){thinking.remove();addChatMsg("ia",d.response||"Sin respuesta.");sendBtn.disabled=false;}).catch(function(e){thinking.remove();addChatMsg("ia","Error IA: "+e.message);sendBtn.disabled=false;});return;}return fetch("http://localhost:11434/api/generate",{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({model:"gemma2:2b",
@@ -545,7 +545,7 @@ function initChat(){
     })
     .then(function(resp){if(!resp.ok) throw new Error("HTTP "+resp.status);return resp.json();})
     .then(function(data){thinking.remove();addChatMsg("ia",data.response||"Sin respuesta.");sendBtn.disabled=false;})
-    .catch(function(err){thinking.remove();addChatMsg("ia","Error conectando con Ollama: "+err.message);sendBtn.disabled=false;});})().catch(function(e){if(e==="skip")return;});
+    .catch(function(err){thinking.remove();addChatMsg("ia","Error conectando con Ollama: "+err.message);sendBtn.disabled=false;});
   }
   sendBtn.addEventListener("click",doSend);
   promptInput.addEventListener("keydown",function(e){if(e.key==="Enter") doSend();});
