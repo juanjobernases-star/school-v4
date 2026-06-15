@@ -1,3 +1,7 @@
+#splash{position:fixed;inset:0;z-index:9999;}
+.modal{display:none;}
+.modal.active{display:flex;}
+#quiz-next,#exam-next,#quiz-explanation,#exam-explanation,#quiz-results,#exam-results{display:none;}
 :root{--primary:#007AFF;--primary-light:rgba(0,122,255,0.1);--bg:#F2F2F7;--card:#FFFFFF;--text:#1C1C1E;--text-secondary:#8E8E93;--border:#E5E5EA;--sidebar-width:260px;--radius:16px;--shadow:0 2px 12px rgba(0,0,0,0.08);}
 .dark-mode{--bg:#1C1C1E;--card:#2C2C2E;--text:#F2F2F7;--text-secondary:#AEAEB2;--border:#3A3A3C;--shadow:0 2px 12px rgba(0,0,0,0.3);}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
