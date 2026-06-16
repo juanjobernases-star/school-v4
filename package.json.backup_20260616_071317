@@ -1,7 +1,7 @@
 {
   "name": "school-v4-secure",
   "version": "4.0.0",
-  "description": "School v4 \u2014 App educativa LOMLOE para 6\u00ba de Primaria con IA local Ollama",
+  "description": "School v4 — App educativa LOMLOE para 6º de Primaria con IA local Ollama",
   "homepage": "https://github.com/juanjo/school-v4",
   "author": "Juanjo <juanjo@schoolv4.local>",
   "license": "MIT",
@@ -45,29 +45,8 @@
           "arch": [
             "x64"
           ]
-        },
-        {
-          "target": "msi",
-          "arch": [
-            "x64"
-          ]
         }
-      ],
-      "certificateFile": "${env.WIN_CERT_FILE}",
-      "certificatePassword": "${env.WIN_CERT_PASSWORD}",
-      "signingHashAlgorithms": [
-        "sha256"
       ]
-    },
-    "mac": {
-      "target": [
-        "dmg",
-        "zip"
-      ],
-      "signingIdentity": "Developer ID Application",
-      "notarize": {
-        "teamId": "${env.APPLE_TEAM_ID}"
-      }
     }
   },
   "dependencies": {

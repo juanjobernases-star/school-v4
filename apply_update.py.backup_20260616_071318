@@ -1,15 +1,4 @@
 #!/usr/bin/env python3
-"""Security-hardened script"""
-import os
-import sys
-import tempfile
-import shutil
-from pathlib import Path
-
-# Security: Ensure safe umask for temp files
-os.umask(0o077)
-
-#!/usr/bin/env python3
 # apply_update.py - Adds splash, collapsible cards, reset button
 import base64, os, shutil, datetime
 
@@ -20,7 +9,7 @@ print("=" * 55)
 # Backup
 for f in ["styles.css","index.html","app.js"]:
     if os.path.exists(f):
-        shutil.copy2(f, f+".backup_"+datetime.datetime.now().strftime("%H%M%S"))
+        shutil.copy2(f, f+".bak_"+datetime.datetime.now().strftime("%H%M%S"))
         print("  Backup:", f)
 
 # 1. Append new CSS

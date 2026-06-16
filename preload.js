@@ -1,1 +1,4 @@
-const {contextBridge,ipcRenderer}=require('electron');contextBridge.exposeInMainWorld('electronAPI',{ollamaChat:(prompt)=>ipcRenderer.invoke('ollama-chat',String(prompt).slice(0,1000))});
+const {contextBridge,ipcRenderer}=require('electron');
+contextBridge.exposeInMainWorld('electronAPI',{
+  ollamaChat:(prompt)=>ipcRenderer.invoke('ollama-chat',String(prompt).slice(0,1000))
+});

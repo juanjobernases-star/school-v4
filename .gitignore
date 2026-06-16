@@ -5,3 +5,73 @@ dist/
 .DS_Store
 sw.js
 *.bak.*
+
+
+# ============ SECURITY - NEVER COMMIT ============
+.env
+.env.local
+.env.*.local
+.env.production
+
+# Certificates & Keys
+*.p12
+*.pem
+*.key
+*.jks
+*.keystore
+*.cer
+*.crt
+
+# iOS specific
+*.xcconfig
+*.mobileprovision
+*.mobileprovision.*
+*.ipa
+ios/Certificates/
+ios/Profiles/
+ios/Identifiers.plist
+
+# Android specific
+android/keystore/
+android/signing/
+android/*.jks
+android/*.keystore
+
+# Build artifacts
+dist/
+build/
+*.deb
+*.AppImage
+*.dmg
+*.exe
+*.msi
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json.backup*
+
+# Logs
+logs/
+*.log
+lerna-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Temporary files
+tmp/
+temp/
+*.tmp

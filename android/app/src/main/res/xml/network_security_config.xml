@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Reject cleartext traffic except localhost -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">example.com</domain>
+    </domain-config>
+    
+    <!-- Allow cleartext ONLY for localhost (Ollama) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+    </domain-config>
+    
+    <!-- Require HTTPS for all other connections -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">.</domain>
+    </domain-config>
+</network-security-config>
