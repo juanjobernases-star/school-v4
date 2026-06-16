@@ -90,3 +90,15 @@ temp/
 ios/Certificates/
 ios/Profiles/
 android/keystore/
+
+# Security - Sensitive Files
+*.xcconfig
+*.p12
+*.pem
+*.key
+*.keystore
+.env
+.env.local
+.env.production
+ios/Certificates/
+android/keystore/
