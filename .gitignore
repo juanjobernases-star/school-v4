@@ -75,3 +75,18 @@ pids/
 tmp/
 temp/
 *.tmp
+
+# Security - Never commit these
+*.xcconfig
+*.p12
+*.pem
+*.key
+*.keystore
+*.jks
+.env
+.env.local
+.env.*.local
+.env.production
+ios/Certificates/
+ios/Profiles/
+android/keystore/
