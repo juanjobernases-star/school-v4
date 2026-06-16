@@ -102,3 +102,13 @@ android/keystore/
 .env.production
 ios/Certificates/
 android/keystore/
+
+# Security - Never commit sensitive files
+*.xcconfig
+*.p12
+*.pem
+*.key
+*.keystore
+.env
+.env.local
+.env.production
